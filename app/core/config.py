@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = os.getenv("SMTP_PASS", "srlc cxsg jwqy bfqw")
     SMTP_FROM: str = os.getenv("SMTP_FROM", "tembanblaise12@gmail.com")
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    SMTP_USE_TLS: bool = True 
 
     model_config = SettingsConfigDict(
         case_sensitive=True,

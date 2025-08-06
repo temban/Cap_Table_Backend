@@ -5,6 +5,9 @@ from app.core.config import settings
 import smtplib
 from typing import Optional
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def create_email_template(shareholder_name: str, issuance_data: dict) -> str:
     """Generate beautiful HTML email template"""
@@ -13,7 +16,7 @@ def create_email_template(shareholder_name: str, issuance_data: dict) -> str:
     price_display = f"${price_per_share:.2f}" if price_per_share is not None else "N/A"
     
     return f"""
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -91,8 +94,6 @@ def create_email_template(shareholder_name: str, issuance_data: dict) -> str:
 </body>
 </html>
     """
-
-
 def send_certificate_email(
     to_email: str,
     shareholder_name: str,
@@ -101,6 +102,8 @@ def send_certificate_email(
 ) -> bool:
     """Send beautiful HTML email with certificate attachment"""
     try:
+        logger.info(f"Preparing email to {to_email} for certificate {issuance_data['id']}")
+        
         # Create message container
         msg = MIMEMultipart('alternative')
         msg['From'] = settings.SMTP_FROM
@@ -109,35 +112,36 @@ def send_certificate_email(
         
         # Create HTML email body
         html = create_email_template(shareholder_name, issuance_data)
-        
-        # Attach both HTML and plain text versions
-        part1 = MIMEText(html, 'html')
-        msg.attach(part1)
+        msg.attach(MIMEText(html, 'html'))
         
         # Attach PDF
-        part2 = MIMEApplication(
+        part = MIMEApplication(
             pdf_attachment,
             Name=f"share_certificate_{issuance_data['id']}.pdf"
         )
-        part2['Content-Disposition'] = f'attachment; filename="share_certificate_{issuance_data["id"]}.pdf"'
-        msg.attach(part2)
+        part['Content-Disposition'] = f'attachment; filename="share_certificate_{issuance_data["id"]}.pdf"'
+        msg.attach(part)
         
         if settings.ENVIRONMENT == "testing":
-            print(f"\n[Email Simulation] To: {to_email}")
-            print(f"Subject: {msg['Subject']}")
-            print("Would send beautiful HTML email with attachment")
+            logger.info(f"Email simulation (not sent): To: {to_email}")
             return True
         
-        # Send the message via SMTP server
+        # Connect to SMTP server
+        logger.info(f"Connecting to SMTP server at {settings.SMTP_HOST}:{settings.SMTP_PORT}")
+        
         with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
             server.ehlo()
-            server.starttls()
-            server.ehlo()
+            
+            # Only start TLS if explicitly configured
+            if getattr(settings, 'SMTP_USE_TLS', True):  # Safely get attribute with default
+                server.starttls()
+                server.ehlo()
+            
             server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
             server.send_message(msg)
+            logger.info("Email sent successfully")
             return True
             
     except Exception as e:
-        print(f"Error sending email: {str(e)}")
+        logger.error(f"Failed to send email: {str(e)}", exc_info=True)
         return False
-

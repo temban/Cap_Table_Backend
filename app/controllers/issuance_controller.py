@@ -1,10 +1,11 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.db.session import get_db
 from app.dependencies.auth import get_current_user, get_admin_user
+from app.models.issuance_model import ShareIssuance
 from app.schemas.issuance_schema import (
     ShareIssuanceCreate,
     ShareIssuanceResponse,
@@ -191,34 +192,53 @@ def generate_certificate(
     )
 
 @router.get("/test-email")
-def test_email(db: Session = Depends(get_db)):
-    """Test email functionality with correct parameters"""
+def test_email(issuance_id: str = Query(...), db: Session = Depends(get_db)):
+    """Send a test email using an existing issuance ID"""
     try:
-        # Test data matching what send_certificate_email expects
-        test_data = {
-            "id": "TEST123",
-            "number_of_shares": 100,
-            "price_per_share": 10.50,
-            "issue_date": datetime.now()
+        # 1. Get the issuance record
+        issuance = db.query(ShareIssuance).filter(ShareIssuance.id == issuance_id).first()
+        if not issuance:
+            raise HTTPException(status_code=404, detail="Issuance not found")
+
+        # 2. Get the shareholder (user) associated with the issuance
+        shareholder = issuance.shareholder
+        print("sdfsdfsdfsdfsdfsdf", shareholder.email.strip())
+        print(f"Raw email: {repr(shareholder.email)}")
+        if not shareholder:
+            raise HTTPException(status_code=404, detail="Shareholder not found")
+
+        # 3. Construct issuance data for the certificate
+        cert_data = {
+            "id": issuance.id,
+            "number_of_shares": issuance.number_of_shares,
+            "price_per_share": issuance.price_per_share,
+            "issue_date": issuance.issue_date
         }
+
+        # 4. Construct shareholder data
+        shareholder_data = {
+            "id": shareholder.id,
+            "full_name": shareholder.full_name
+        }
+
+        # 5. Generate the certificate
+        pdf_buffer = generate_share_certificate(cert_data, shareholder_data)
+        pdf_bytes = pdf_buffer.getvalue()
         
-        # Generate dummy PDF
-        pdf_buffer = generate_share_certificate(
-            test_data,
-            {"id": "TEST", "full_name": "Test User"}
-        )
-        
+        # 6. Send the email
+        email = shareholder.email.strip()
         success = send_certificate_email(
-            to_email="tembanblaise1@gmail.com",
-            shareholder_name="Test User",
-            issuance_data=test_data,
-            pdf_attachment=pdf_buffer.read()
+            to_email=f"{email}",
+            shareholder_name=shareholder.full_name,
+            issuance_data=cert_data,
+            pdf_attachment=pdf_bytes
         )
-        
+
         return {
             "success": success,
-            "message": "Check your email inbox and spam folder"
+            "message": "Check your inbox and spam folder",
+            "shareholder_email": shareholder.email
         }
-        
+
     except Exception as e:
         return {"error": str(e)}
