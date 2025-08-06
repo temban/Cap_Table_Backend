@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
-DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:admin@localhost:5432/cap_table_db")
+DATABASE_URL: str = os.getenv("DATABASE_URL")
 SECRET_KEY: str = os.getenv("SECRET_KEY", "EWERSDFSFSFSDFSDFSDFT5QT5")
 ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
@@ -15,9 +15,9 @@ class Settings(BaseSettings):
     COMPANY_NAME: str = os.getenv("COMPANY_NAME", "Cap Table Management")
     SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", 587))
-    SMTP_USER: str = os.getenv("SMTP_USER", "tembanblaise12@gmail.com")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASS", "srlc cxsg jwqy bfqw")
-    SMTP_FROM: str = os.getenv("SMTP_FROM", "tembanblaise12@gmail.com")
+    SMTP_USER: str = os.getenv("SMTP_USER")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASS")
+    SMTP_FROM: str = os.getenv("SMTP_FROM")
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
     SMTP_USE_TLS: bool = True 
 
