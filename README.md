@@ -337,3 +337,7 @@ For questions or feedback:
 ---
 
 **🎉 Happy Coding!** 🚀
+
+<img width="1177" height="1795" alt="Screenshot 2025-08-06 103544" src="https://github.com/user-attachments/assets/944df5b3-45d6-46f1-a9fd-7d8a00cd77f5" />
+
+<img width="1182" height="1803" alt="Screenshot 2025-08-06 103654" src="https://github.com/user-attachments/assets/222cc816-14ad-4f9b-a698-952e16f84700" />
