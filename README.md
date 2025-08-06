@@ -314,8 +314,8 @@ Cap_Table_Backend/
 
 ## **🔮 Future Improvements**  
 1. **Realtime Updates** – Implement WebSocket notifications for instant share price changes and issuance alerts.  
-2. **Dynamic Equity Modeling** – Add cap table simulations to forecast dilution impacts before issuing new shares.  
-3. **Automated Valuation** – Integrate with financial APIs to auto-calculate share prices based on company KPIs.  
+2. **Share Impact Predictor** – Before issuing new shares, simulate how it will affect existing shareholders' ownership percentages (anti-dilution forecasting).  
+3. **Smart Pricing Tool** – Automatically set fair share prices by analyzing company performance metrics (KPIs = Key Performance Indicators like revenue growth, profit margins, etc.).  
 
 Each delivers direct business value:  
 - **Realtime** → Faster decision-making  
