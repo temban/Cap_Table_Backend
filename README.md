@@ -341,3 +341,8 @@ For questions or feedback:
 <img width="1177" height="1795" alt="Screenshot 2025-08-06 103544" src="https://github.com/user-attachments/assets/944df5b3-45d6-46f1-a9fd-7d8a00cd77f5" />
 
 <img width="1182" height="1803" alt="Screenshot 2025-08-06 103654" src="https://github.com/user-attachments/assets/222cc816-14ad-4f9b-a698-952e16f84700" />
+
+<img width="1328" height="965" alt="Screenshot 2025-08-06 104057" src="https://github.com/user-attachments/assets/0fe97736-0a26-4e08-94ea-d4f046621f4b" />
+
+<img width="796" height="1024" alt="Screenshot 2025-08-06 104115" src="https://github.com/user-attachments/assets/9d5bc50f-0ae4-4107-80eb-b94561ecc569" />
+
