@@ -332,7 +332,7 @@ MIT License – Free for use and modification.
 ## **📞 Contact**  
 For questions or feedback:  
 📧 **Email**: tembanblaise1@gmail.com  
-🌐 **GitHub**: [your-github](https://github.com/temban)  
+🌐 **GitHub**: [Temban Blaise](https://github.com/temban)  
 
 ---
 
