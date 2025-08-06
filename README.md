@@ -215,10 +215,11 @@ This table now:
 ```plaintext
 Cap_Table_Backend/
 ├── app/                 # Core application
-│   ├── controllers/     # API routes
+│   ├── controllers/     # API endpoint
 │   ├── core/            # Config & security
 │   ├── db/              # Database setup
 │   ├── models/          # SQLAlchemy models
+│   ├── routes/          # Routes with prefix for controllers
 │   ├── schemas/         # Pydantic models
 │   ├── services/        # Business logic
 │   ├── utils/           # Helpers (PDF, email)
@@ -227,6 +228,7 @@ Cap_Table_Backend/
 ├── alembic/             # Database migrations
 ├── .env                 # Environment variables
 ├── docker-compose.yml   # Docker setup
+├── Dockerfile
 └── README.md            # Project docs
 
 
@@ -345,4 +347,3 @@ For questions or feedback:
 <img width="1328" height="965" alt="Screenshot 2025-08-06 104057" src="https://github.com/user-attachments/assets/0fe97736-0a26-4e08-94ea-d4f046621f4b" />
 
 <img width="796" height="1024" alt="Screenshot 2025-08-06 104115" src="https://github.com/user-attachments/assets/9d5bc50f-0ae4-4107-80eb-b94561ecc569" />
-
