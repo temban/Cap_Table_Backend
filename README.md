@@ -71,8 +71,8 @@ Optional:
 
 ### **1. Clone the Repository**  
 ```bash
-git clone https://github.com/your-repo/cap-table-backend.git
-cd cap-table-backend
+git clone https://github.com/temban/Cap_Table_Backend.git
+cd Cap_Table_Backend
 ```
 
 ### **2. Set Up a Virtual Environment**  
@@ -91,14 +91,27 @@ pip install -r requirements.txt
 ### **4. Configure Environment Variables**  
 Create a `.env` file (or modify `run.sh`):  
 ```env
-DATABASE_URL="postgresql://postgres:admin@localhost:5432/cap_table_db"
-SECRET_KEY="your-secret-key"
-SMTP_USER="your-email@gmail.com"
-SMTP_PASS="your-app-password"
+
+DATABASE_URL=postgresql://user:password@localhost:port/bd_name
+SECRET_KEY=secret_key
+ALGORITHM=algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=port
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=password
+SMTP_FROM=your-email@gmail.com
+COMPANY_NAME=company_name
+ENVIRONMENT=development
 ```
 
 ### **5. Initialize the Database**  
 ```bash
+alembic revision --autogenerate -m "Initial tables"
+alembic upgrade head
+alembic stamp head
+       or
 python -m alembic upgrade head
 python -m app.db.init_db
 ```
@@ -159,13 +172,43 @@ Generates a coverage report in the terminal.
 - **Redoc**: `http://localhost:8000/redoc`  
 
 ### **Key Endpoints**  
+
 | Endpoint | Method | Description | Access |
 |----------|--------|-------------|--------|
-| `/api/token/` | POST | Login (JWT) | Public |
-| `/api/shareholders/` | GET | List shareholders | Admin |
-| `/api/issuances/` | POST | Issue shares | Admin |
-| `/api/issuances/{id}/certificate` | GET | Download PDF | Shareholder/Admin |
+| `/api/token/` | POST | Login (JWT) - Returns access & refresh tokens | Public |
+| `/api/token/refresh` | POST | Refresh access token using refresh token | Authenticated |
+| `/api/shareholders/` | GET | List all shareholders with total shares (Dashboard view) | Admin |
+| `/api/shareholders/` | POST | Create new shareholder (Name, Email) | Admin |
+| `/api/shareholders/{id}` | GET | Get shareholder details | Admin |
+| `/api/shareholders/{id}` | PUT | Update shareholder information | Admin |
+| `/api/shareholders/{id}` | DELETE | Deactivate shareholder | Admin |
+| `/api/issuances/` | GET | List all issuances (Admin) or only own (Shareholder) | Authenticated |
+| `/api/issuances/` | POST | Create new share issuance | Admin |
+| `/api/issuances/distribution` | GET | Get ownership distribution data for pie chart | Admin |
+| `/api/issuances/{id}/certificate` | GET | Generate and download PDF share certificate | Owner/Admin |
+| `/api/me` | GET | Get current user profile and shares (Shareholder dashboard) | Authenticated |
 
+### User Story Mapping:
+**Admin Features:**
+- ✅ Login → `/api/token/` (POST)
+- ✅ List shareholders → `/api/shareholders/` (GET)
+- ✅ Ownership visualization → `/api/issuances/distribution` (GET)
+- ✅ Add shareholder → `/api/shareholders/` (POST)
+- ✅ Issue shares → `/api/issuances/` (POST)
+- ✅ Generate certificate → `/api/issuances/{id}/certificate` (GET)
+
+**Shareholder Features:**
+- ✅ Login → `/api/token/` (POST)
+- ✅ Personal dashboard → `/api/me` (GET)
+- ✅ View issuances → `/api/issuances/` (GET)
+- ✅ Download certificates → `/api/issuances/{id}/certificate` (GET)
+
+This table now:
+1. Covers all API endpoints from the technical requirements
+2. Maps directly to each user story
+3. Specifies access control (Public/Admin/Shareholder)
+4. Includes both authentication endpoints and business logic endpoints
+5. Shows all CRUD operations for shareholders and issuances
 ---
 
 ## **🗂 Project Structure**  
@@ -186,7 +229,9 @@ Cap_Table_Backend/
 ├── docker-compose.yml   # Docker setup
 └── README.md            # Project docs
 
-detailed
+
+Detailed Project Structure
+
 Cap_Table_Backend/
 │
 ├── alembic/
@@ -268,10 +313,14 @@ Cap_Table_Backend/
 ---
 
 ## **🔮 Future Improvements**  
-1. **Audit Trail** – Log all critical actions (e.g., share issuance).  
-2. **Async Tasks** – Use Celery for background email sending.  
-3. **Enhanced Security** – Rate limiting, OAuth2 scopes.  
-4. **Frontend Integration** – Connect with a React dashboard.  
+1. **Realtime Updates** – Implement WebSocket notifications for instant share price changes and issuance alerts.  
+2. **Dynamic Equity Modeling** – Add cap table simulations to forecast dilution impacts before issuing new shares.  
+3. **Automated Valuation** – Integrate with financial APIs to auto-calculate share prices based on company KPIs.  
+
+Each delivers direct business value:  
+- **Realtime** → Faster decision-making  
+- **Modeling** → Prevent equity missteps  
+- **Valuation** → Data-driven pricing
 
 ---
 
