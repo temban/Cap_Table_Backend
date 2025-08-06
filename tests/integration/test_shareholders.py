@@ -48,7 +48,7 @@ def setup_and_teardown(db):
 def get_admin_auth_headers():
     """Helper to get admin auth headers"""
     login_response = client.post(
-        "/api/v1/login",
+        "/api/v1/token",
         json={"email": "admin@example.com", "password": "adminpassword"}
     )
     assert login_response.status_code == 200, f"Login failed: {login_response.json()}"

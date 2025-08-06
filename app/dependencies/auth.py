@@ -7,7 +7,7 @@ from app.core.config import SECRET_KEY, ALGORITHM
 from app.db.session import get_db
 from app.models.user_model import User, UserRole
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token")
 
 async def get_token_header(authorization: Optional[str] = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):

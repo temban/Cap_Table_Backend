@@ -17,7 +17,7 @@ from app.models.user_model import User, UserRole
 
 router = APIRouter(tags=["Authentication"])
 
-@router.post("/login", response_model=Token)
+@router.post("/token", response_model=Token)
 async def login_for_access_token(
     login_data: LoginRequest,
     db: Session = Depends(get_db)

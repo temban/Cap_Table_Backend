@@ -46,7 +46,7 @@ def setup_and_teardown(db):
 
 def get_auth_headers(email: str, password: str):
     """Helper function to get auth headers"""
-    login_response = client.post("/api/v1/login", json={
+    login_response = client.post("/api/v1/token", json={
         "email": email,
         "password": password
     })
@@ -88,7 +88,7 @@ def test_login_success(db):
     db.commit()
     
     # Test login
-    response = client.post("/api/v1/login", json={
+    response = client.post("/api/v1/token", json={
         "email": "testuser@example.com",
         "password": "testpass"
     })
@@ -101,7 +101,7 @@ def test_login_success(db):
     assert data["user"]["email"] == "testuser@example.com"
 
 def test_login_failure_wrong_password():
-    response = client.post("/api/v1/login", json={
+    response = client.post("/api/v1/token", json={
         "email": "testuser@example.com",
         "password": "wrongpass"
     })
@@ -120,7 +120,7 @@ def test_refresh_token(db):
     db.add(user)
     db.commit()
     
-    login_response = client.post("/api/v1/login", json={
+    login_response = client.post("/api/v1/token", json={
         "email": "testuser@example.com",
         "password": "testpass"
     })

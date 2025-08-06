@@ -1,152 +1,192 @@
-Here's a comprehensive `README.md` with a table of contents and detailed instructions for setting up, running, and testing your FastAPI backend:
+# **Cap Table Management System - Backend (FastAPI)**  
 
-```markdown
-# Cap Table Management System - Backend
-
-A FastAPI backend for managing company capitalization tables, shareholders, and share issuances with PDF certificate generation.
-
-## Table of Contents
-1. [Features](#features)
-2. [Technologies](#technologies)
-3. [Prerequisites](#prerequisites)
-4. [Setup & Installation](#setup--installation)
-5. [Running the Application](#running-the-application)
-6. [API Documentation](#api-documentation)
-7. [Testing](#testing)
-8. [Database Migrations](#database-migrations)
-9. [Docker Deployment](#docker-deployment)
-10. [Project Structure](#project-structure)
-11. [Environment Variables](#environment-variables)
-12. [Troubleshooting](#troubleshooting)
+A **FastAPI** backend for managing a company's capitalization table (Cap Table), including shareholder management, share issuance, and certificate generation.  
 
 ---
 
-## Features
-- **JWT Authentication**: Secure login/refresh endpoints
-- **Role-Based Access**: Admin vs. shareholder permissions
-- **Shareholder Management**: CRUD operations for shareholders
-- **Share Issuance**: Issue shares with PDF certificate generation
-- **Ownership Visualization**: Endpoint for pie chart data
-- **Email Notifications**: SMTP integration for share issuance alerts
-- **Unit & Integration Tests**: 85%+ test coverage
-
-## Technologies
-- **Backend**: FastAPI (Python 3.10+)
-- **Database**: PostgreSQL
-- **PDF Generation**: ReportLab
-- **Email**: SMTP (Gmail compatible)
-- **Testing**: Pytest
-- **Containerization**: Docker
+## **📋 Table of Contents**  
+1. [Features](#-features)  
+2. [Technologies](#-technologies)  
+3. [Prerequisites](#-prerequisites)  
+4. [Setup & Installation](#-setup--installation)  
+5. [Running the Application](#-running-the-application)  
+6. [Running Tests](#-running-tests)  
+7. [API Documentation](#-api-documentation)  
+8. [Project Structure](#-project-structure)  
+9. [Future Improvements](#-future-improvements)  
+10. [License](#-license)  
 
 ---
 
-## Prerequisites
-- Python 3.10+
-- PostgreSQL 14+
-- Docker (optional)
-- Git
+## **✨ Features**  
+✅ **Authentication & Authorization**  
+- JWT-based login (`/api/token/`)  
+- Role-based access (Admin & Shareholder)  
+
+✅ **Shareholder Management**  
+- Admin can create, update, and deactivate shareholders  
+- View total shares per shareholder  
+
+✅ **Share Issuance**  
+- Issue shares to shareholders  
+- Generate PDF certificates (`/api/issuances/{id}/certificate`)  
+- Email notifications (SMTP)  
+
+✅ **Data Visualization**  
+- Ownership distribution endpoint (`/api/issuances/distribution`)  
+
+✅ **Testing**  
+- Unit & integration tests  
+
+✅ **Bonus Features**  
+- Email notifications  
+- Advanced validation (e.g., no negative shares)  
 
 ---
 
-## Setup & Installation
+## **🛠 Technologies**  
+- **Backend**: FastAPI (Python)  
+- **Database**: PostgreSQL  
+- **Authentication**: JWT  
+- **PDF Generation**: ReportLab  
+- **Email**: SMTP (Gmail)  
+- **Testing**: Pytest  
+- **Containerization**: Docker  
 
-### 1. Clone the repository
+---
+
+## **📦 Prerequisites**  
+Before running the project, ensure you have:  
+- **Python 3.9+**  
+- **PostgreSQL** (running locally or in Docker)  
+- **Git** (for cloning the repo)  
+- **Pip** (for dependencies)  
+
+Optional:  
+- **Docker** (if running in a container)  
+
+---
+
+## **⚙ Setup & Installation**  
+
+### **1. Clone the Repository**  
 ```bash
-git clone https://github.com/yourusername/Cap_Table_Backend.git
-cd Cap_Table_Backend
+git clone https://github.com/your-repo/cap-table-backend.git
+cd cap-table-backend
 ```
 
-### 2. Set up virtual environment
+### **2. Set Up a Virtual Environment**  
 ```bash
 python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# OR
+venv\Scripts\activate     # Windows
 ```
 
-### 3. Activate virtual environment
-- **Linux/MacOS**:
-  ```bash
-  source venv/bin/activate
-  ```
-- **Windows**:
-  ```bash
-  .\venv\Scripts\activate
-  ```
-
-### 4. Install dependencies
+### **3. Install Dependencies**  
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Database setup
-1. Create a PostgreSQL database named `cap_table_db`
-2. Update `.env` with your credentials:
-   ```ini
-   DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/cap_table_db
-   ```
+### **4. Configure Environment Variables**  
+Create a `.env` file (or modify `run.sh`):  
+```env
+DATABASE_URL="postgresql://postgres:admin@localhost:5432/cap_table_db"
+SECRET_KEY="your-secret-key"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-app-password"
+```
 
----
-
-## Running the Application
+### **5. Initialize the Database**  
 ```bash
-# Make run.sh executable (Linux/Mac)
-chmod +x run.sh
-
-# Start the application
-./run.sh
+python -m alembic upgrade head
+python -m app.db.init_db
 ```
-The server will run at `http://localhost:8000`
 
 ---
 
-## API Documentation
-Access interactive docs after running the server:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
-
----
-
-## Testing
-
-### Run all tests
+## **🚀 Running the Application**  
+### **Option 1: Using `run.sh` (Linux/Mac)**
 ```bash
-pytest tests/ -v
+chmod +x run.sh  # Make executable
+./run.sh         # Starts the server
 ```
+- Runs migrations  
+- Seeds initial data (admin & shareholder)  
+- Starts FastAPI on `http://0.0.0.0:8000`  
 
-### Test categories
-| Command | Description |
-|---------|-------------|
-| `pytest tests/unit/` | Unit tests (services, utils) |
-| `pytest tests/integration/` | API endpoint tests |
-| `pytest --cov=app tests/` | Test coverage report |
-
-### Key Test Cases
-- Authentication flow (login, refresh, JWT validation)
-- Shareholder CRUD operations
-- Share issuance with PDF generation
-- Role-based access control
-
----
-
-## Database Migrations
+### **Option 2: Manual Start**
 ```bash
-# Create new migration (after model changes)
-alembic revision --autogenerate -m "description"
-
-# Apply migrations
-alembic upgrade head
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+- Access Swagger UI: `http://localhost:8000/docs`  
+
+### **Option 3: Docker (Recommended for Production)**
+```bash
+docker-compose up --build
+```
+- Starts PostgreSQL & FastAPI in containers  
 
 ---
 
-## Docker Deployment
-1. Build and start containers:
-   ```bash
-   docker-compose up --build
-   ```
-2. Access at `http://localhost:8000`
+## **🧪 Running Tests**  
+### **1. Unit Tests**  
+```bash
+pytest tests/unit -v
+```
+Tests:  
+- Authentication  
+- Shareholder & Issuance services  
+
+### **2. Integration Tests**  
+```bash
+pytest tests/integration -v
+```
+Tests:  
+- API endpoints  
+- Database interactions  
+
+### **3. Test Coverage Report**  
+```bash
+pytest --cov=app tests/
+```
+Generates a coverage report in the terminal.  
 
 ---
-## Project Structure
-```
+
+## **📖 API Documentation**  
+- **Swagger UI**: `http://localhost:8000/docs`  
+- **Redoc**: `http://localhost:8000/redoc`  
+
+### **Key Endpoints**  
+| Endpoint | Method | Description | Access |
+|----------|--------|-------------|--------|
+| `/api/token/` | POST | Login (JWT) | Public |
+| `/api/shareholders/` | GET | List shareholders | Admin |
+| `/api/issuances/` | POST | Issue shares | Admin |
+| `/api/issuances/{id}/certificate` | GET | Download PDF | Shareholder/Admin |
+
+---
+
+## **🗂 Project Structure**  
+```plaintext
+Cap_Table_Backend/
+├── app/                 # Core application
+│   ├── controllers/     # API routes
+│   ├── core/            # Config & security
+│   ├── db/              # Database setup
+│   ├── models/          # SQLAlchemy models
+│   ├── schemas/         # Pydantic models
+│   ├── services/        # Business logic
+│   ├── utils/           # Helpers (PDF, email)
+│   └── main.py          # FastAPI app
+├── tests/               # Unit & integration tests
+├── alembic/             # Database migrations
+├── .env                 # Environment variables
+├── docker-compose.yml   # Docker setup
+└── README.md            # Project docs
+
+detailed
 Cap_Table_Backend/
 │
 ├── alembic/
@@ -227,42 +267,24 @@ Cap_Table_Backend/
 
 ---
 
-## Environment Variables
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection URL | `postgresql://postgres:admin@localhost:5432/cap_table_db` |
-| `SECRET_KEY` | JWT signing key | Random string |
-| `SMTP_USER` | Email service username | - |
-| `SMTP_PASSWORD` | Email service password | - |
+## **🔮 Future Improvements**  
+1. **Audit Trail** – Log all critical actions (e.g., share issuance).  
+2. **Async Tasks** – Use Celery for background email sending.  
+3. **Enhanced Security** – Rate limiting, OAuth2 scopes.  
+4. **Frontend Integration** – Connect with a React dashboard.  
 
 ---
 
-## Troubleshooting
-**Issue**: Database connection errors  
-**Fix**: Verify PostgreSQL is running and credentials in `.env` match your DB setup
+## **📜 License**  
+MIT License – Free for use and modification.  
 
-**Issue**: Missing dependencies  
-**Fix**: Run `pip install -r requirements.txt` and check Python version (3.10+ required)
+---
 
-**Issue**: Migration conflicts  
-**Fix**: Delete `alembic/versions/` and regenerate migrations
-```
+## **📞 Contact**  
+For questions or feedback:  
+📧 **Email**: tembanblaise1@gmail.com  
+🌐 **GitHub**: [your-github](https://github.com/temban)  
 
-### Key Notes for Submission:
-1. **Video Walkthrough**: Highlight:
-   - Database initialization
-   - Admin/shareholder login flow
-   - Share issuance with PDF demo
-   - Test execution
+---
 
-2. **AI Tools Used**: Mention if you used Copilot/Cursor for:
-   - Boilerplate code generation
-   - Test case suggestions
-   - Documentation templates
-
-3. **Future Improvements**:
-   - Async email delivery (Celery/RQ)
-   - Redis caching for frequent queries
-   - WebSocket notifications
-
-This README provides comprehensive guidance while showcasing your architectural decisions and attention to detail.
+**🎉 Happy Coding!** 🚀
